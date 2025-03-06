@@ -1,4 +1,3 @@
-// manifest.json
 {
   "short_name": "PhotoWidget",
   "name": "Photo Slideshow Widget",
@@ -17,5 +16,8 @@
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",
-  "theme_color": "#000000"
+  "theme_color": "#000000",
+  "description": "Photo slideshow widget for home screen",
+  "categories": ["utilities"],
+  "prefer_related_applications": false
 }
