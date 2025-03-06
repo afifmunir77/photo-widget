@@ -110,5 +110,37 @@
       .catch((error) => console.log('Service Worker registration failed:', error));
   }
 </script>
+    <script>
+  let deferredPrompt;
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    
+    // Show custom install button
+    const installButton = document.createElement('button');
+    installButton.textContent = 'Install Widget';
+    installButton.style.position = 'fixed';
+    installButton.style.bottom = '80px';
+    installButton.style.right = '20px';
+    installButton.style.zIndex = '1000';
+    installButton.style.padding = '10px 20px';
+    installButton.style.background = '#fff';
+    installButton.style.borderRadius = '5px';
+    installButton.style.border = 'none';
+    installButton.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+    
+    installButton.addEventListener('click', () => {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('User accepted the install prompt');
+        }
+      });
+    });
+    
+    document.body.appendChild(installButton);
+  });
+</script>
 </body>
 </html>
