@@ -34,13 +34,32 @@
             right: 20px;
             z-index: 1000;
         }
+        /* Add styles for install button */
+        #installContainer {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            padding: 12px 24px;
+            background: #ffffff;
+            border-radius: 25px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            cursor: pointer;
+            display: none;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            color: #333;
+        }
     </style>
 </head>
 <body>
     <input type="file" id="photoInput" accept="image/*" multiple>
     <div id="image-container"></div>
+    <div id="installContainer">📱 Add to Home Screen</div>
 
     <script>
+        // Photo slideshow functionality
         const imageContainer = document.getElementById('image-container');
         const photoInput = document.getElementById('photoInput');
         let images = [];
@@ -78,106 +97,30 @@
 
         // PWA Installation
         let deferredPrompt;
+        const installContainer = document.getElementById('installContainer');
+
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            showInstallPromotion();
+            installContainer.style.display = 'block';
         });
 
-        function showInstallPromotion() {
-            const installButton = document.createElement('button');
-            installButton.textContent = 'Install Widget';
-            installButton.style.position = 'fixed';
-            installButton.style.bottom = '80px';
-            installButton.style.right = '20px';
-            installButton.style.zIndex = '1000';
-            installButton.addEventListener('click', () => {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        console.log('User accepted the install prompt');
-                    }
-                });
+        installContainer.addEventListener('click', () => {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choice) => {
+                if (choice.outcome === 'accepted') {
+                    console.log('Installed successfully!');
+                    installContainer.style.display = 'none';
+                }
             });
-            document.body.appendChild(installButton);
+        });
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then(registration => console.log('Service Worker registered:', registration))
+                .catch(error => console.error('Service Worker registration failed:', error));
         }
     </script>
-    <!-- Add this before </body> -->
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/service-worker.js')
-      .then(() => console.log('Service Worker registered'))
-      .catch((error) => console.log('Service Worker registration failed:', error));
-  }
-</script>
-    <script>
-  let deferredPrompt;
-
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    
-    // Show custom install button
-    const installButton = document.createElement('button');
-    installButton.textContent = 'Install Widget';
-    installButton.style.position = 'fixed';
-    installButton.style.bottom = '80px';
-    installButton.style.right = '20px';
-    installButton.style.zIndex = '1000';
-    installButton.style.padding = '10px 20px';
-    installButton.style.background = '#fff';
-    installButton.style.borderRadius = '5px';
-    installButton.style.border = 'none';
-    installButton.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
-    
-    installButton.addEventListener('click', () => {
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then((choiceResult) => {
-        if (choiceResult.outcome === 'accepted') {
-          console.log('User accepted the install prompt');
-        }
-      });
-    });
-    
-    document.body.appendChild(installButton);
-  });
-</script>
-    <!-- Add this before the closing </body> tag -->
-<div id="installContainer" style="
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1000;
-  padding: 10px 20px;
-  background: white;
-  border-radius: 25px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-  cursor: pointer;
-  display: none;
-">
-  📱 Add to Home Screen
-</div>
-
-<script>
-  let deferredPrompt;
-  const installContainer = document.getElementById('installContainer');
-
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    installContainer.style.display = 'block';
-  });
-
-  installContainer.addEventListener('click', () => {
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then((choice) => {
-      if (choice.outcome === 'accepted') {
-        console.log('Installed successfully!');
-        installContainer.style.display = 'none';
-      }
-    });
-  });
-</script>
 </body>
 </html>
