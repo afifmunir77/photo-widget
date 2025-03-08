@@ -142,5 +142,42 @@
     document.body.appendChild(installButton);
   });
 </script>
+    <!-- Add this before the closing </body> tag -->
+<div id="installContainer" style="
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  padding: 10px 20px;
+  background: white;
+  border-radius: 25px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  cursor: pointer;
+  display: none;
+">
+  📱 Add to Home Screen
+</div>
+
+<script>
+  let deferredPrompt;
+  const installContainer = document.getElementById('installContainer');
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installContainer.style.display = 'block';
+  });
+
+  installContainer.addEventListener('click', () => {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choice) => {
+      if (choice.outcome === 'accepted') {
+        console.log('Installed successfully!');
+        installContainer.style.display = 'none';
+      }
+    });
+  });
+</script>
 </body>
 </html>
